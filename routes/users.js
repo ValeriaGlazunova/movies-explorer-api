@@ -1,8 +1,8 @@
 const userRouter = require('express').Router();
 
-const { getUser, updateUser } = process.env;
+const { getCurrentUser, updateUser } = require('../controllers/users');
 
-userRouter.get('/me', getUser);
+userRouter.get('/me', getCurrentUser);
 
 userRouter.patch('/me', updateUser);
 
