@@ -5,7 +5,7 @@ const ErrForbidden = require('../errors/ErrForbidden');
 
 module.exports.postMovie = (req, res, next) => {
   const {
-    contry,
+    country,
     director,
     duration,
     year,
@@ -18,7 +18,7 @@ module.exports.postMovie = (req, res, next) => {
     nameEN,
   } = req.body;
   Movie.create({
-    contry,
+    country,
     director,
     duration,
     year,
