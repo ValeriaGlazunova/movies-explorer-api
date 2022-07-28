@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const linkRegExp = require('../utils/constants');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -24,14 +25,23 @@ const movieSchema = new mongoose.Schema({
   image: {
     type: String,
     required: true,
+    validator(v) {
+      return linkRegExp.test(v);
+    },
   },
   trailerLink: {
     type: String,
     required: true,
+    validator(v) {
+      return linkRegExp.test(v);
+    },
   },
   thumbnail: {
     type: String,
     required: true,
+    validator(v) {
+      return linkRegExp.test(v);
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
