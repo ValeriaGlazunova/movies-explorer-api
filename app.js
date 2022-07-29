@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors, Joi, celebrate } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 
@@ -24,8 +25,27 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
 
-app.post('/signup', createUser);
-app.post('/signin', login);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().email().required(),
+      password: Joi.string().min(8).required(),
+      name: Joi.string().min(2).max(30),
+    }),
+  }),
+  createUser,
+);
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().email().required(),
+      password: Joi.string().min(8).required(),
+    }),
+  }),
+  login,
+);
 
 app.use('/users', auth, userRouter);
 app.use('/movies', auth, movieRouter);
@@ -36,6 +56,7 @@ app.use((req, res, next) => {
 
 app.use(errorLogger);
 
+app.use(errors());
 app.use(errorsHandler);
 
 app.listen(PORT);
