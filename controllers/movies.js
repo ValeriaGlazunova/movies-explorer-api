@@ -48,13 +48,13 @@ module.exports.getMovies = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  Movie.findById(req.params._id)
     .orFail(new NotFoundError('Фильм для удаления не найден'))
     .then((movie) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new ErrForbidden('нет прав у текущего пользователя');
       }
-      Movie.findByIdAndRemove(req.params.movieId)
+      Movie.findByIdAndRemove(req.params._id)
         .then(() => res.status(200).send(movie))
         .catch(next);
     })
