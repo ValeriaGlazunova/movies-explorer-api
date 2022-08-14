@@ -54,14 +54,8 @@ module.exports.deleteMovie = (req, res, next) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new ErrForbidden('нет прав у текущего пользователя');
       }
-      Movie.findByIdAndRemove(req.params._id)
-        .then(() => res.status(200).send(movie))
-        .catch(next);
+      return movie.remove()
+        .then(() => res.send({ message: 'фильм успешно удален' }));
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
-        return;
-      } next(error);
-    });
+    .catch(next);
 };

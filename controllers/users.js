@@ -22,16 +22,16 @@ module.exports.createUser = (req, res, next) => {
             name: user.name,
             email: user.email,
           },
-        }))
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            next(new InvalidDataError(`Переданы некорректные данные: ${err.message}`));
-          } else if (err.code === 11000) {
-            next(new DuplicateError('Пользователь с данным email уже существует'));
-          } else {
-            next(err);
-          }
-        });
+        }));
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new InvalidDataError(`Переданы некорректные данные: ${err.message}`));
+      } else if (err.code === 11000) {
+        next(new DuplicateError('Пользователь с данным email уже существует'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -39,15 +39,15 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => { throw new NotFoundError('Пользователь не найден'); })
     .then((user) => {
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch(next);
 };
 
 module.exports.updateUser = (req, res, next) => {
-  const { name } = req.body;
+  const { name, email } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
@@ -57,8 +57,11 @@ module.exports.updateUser = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
-        return;
-      } next(error);
+      } else if (error.code === 11000) {
+        next(new DuplicateError('Пользователь с данным email уже существует'));
+      } else {
+        next(error);
+      }
     });
 };
 
@@ -73,7 +76,6 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res
-        .status(200)
         .send({ token });
     })
     .catch(next);
