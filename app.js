@@ -10,9 +10,9 @@ const errorsHandler = require('./middlewares/errorsHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes');
 
-const { PORT = 3000, MONGODB_SERVER = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
+const { NODE_ENV, PORT = 3000, MONGODB_SERVER } = process.env;
 
-mongoose.connect(MONGODB_SERVER, {
+mongoose.connect(NODE_ENV === 'production' ? MONGODB_SERVER : 'mongodb://localhost:27017/bitfilmsdb', {
   family: 4,
 });
 
