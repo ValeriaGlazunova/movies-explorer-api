@@ -1,5 +1,6 @@
 const movieRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const { isURL } = require('validator');
 
 const { getMovies, postMovie, deleteMovie } = require('../controllers/movies');
 
@@ -14,9 +15,24 @@ movieRouter.post(
       duration: Joi.number().required(),
       year: Joi.string().required(),
       description: Joi.string().required(),
-      image: Joi.string().required(),
-      trailerLink: Joi.string().required(),
-      thumbnail: Joi.string().required(),
+      image: Joi.string().required().custom((value, error) => {
+        if (isURL(value)) {
+          return value;
+        }
+        return error.message('Некорректный формат ссылки');
+      }),
+      trailerLink: Joi.string().required().custom((value, error) => {
+        if (isURL(value)) {
+          return value;
+        }
+        return error.message('Некорректный формат ссылки');
+      }),
+      thumbnail: Joi.string().required().custom((value, error) => {
+        if (isURL(value)) {
+          return value;
+        }
+        return error.message('Некорректный формат ссылки');
+      }),
       movieId: Joi.number().required(),
       nameRU: Joi.string().required(),
       nameEN: Joi.string().required(),
