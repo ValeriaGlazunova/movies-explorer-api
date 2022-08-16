@@ -31,7 +31,7 @@ module.exports.postMovie = (req, res, next) => {
     nameRU,
     nameEN,
   })
-    .then((card) => res.status(201).send(card))
+    .then((movie) => res.status(201).send(movie))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
@@ -43,7 +43,7 @@ module.exports.postMovie = (req, res, next) => {
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({})
-    .then((cards) => res.send(cards))
+    .then((movies) => res.send(movies))
     .catch(next);
 };
 

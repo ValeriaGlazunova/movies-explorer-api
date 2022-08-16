@@ -1,6 +1,5 @@
 const movieRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { linkRegExp } = require('../utils/constants');
 
 const { getMovies, postMovie, deleteMovie } = require('../controllers/movies');
 
@@ -15,9 +14,9 @@ movieRouter.post(
       duration: Joi.number().required(),
       year: Joi.string().required(),
       description: Joi.string().required(),
-      image: Joi.string().regex(linkRegExp).required(),
-      trailerLink: Joi.string().regex(linkRegExp).required(),
-      thumbnail: Joi.string().regex(linkRegExp).required(),
+      image: Joi.string().required(),
+      trailerLink: Joi.string().required(),
+      thumbnail: Joi.string().required(),
       movieId: Joi.number().required(),
       nameRU: Joi.string().required(),
       nameEN: Joi.string().required(),
@@ -27,10 +26,10 @@ movieRouter.post(
 );
 
 movieRouter.delete(
-  '/:id',
+  '/:_id',
   celebrate({
     params: Joi.object().keys({
-      movieId: Joi.number().required().length(24).hex(),
+      _id: Joi.string().length(24).hex().required(),
     }),
   }),
   deleteMovie,
