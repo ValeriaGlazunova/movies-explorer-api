@@ -1,29 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 
-const allowedCors = {
-  origin: [
-    'https://glazunova.diploma.nomoredomains.xyz',
-    'http://glazunova.diploma.nomoredomains.xyz',
-    'https://praktikum.tk',
-    'http://praktikum.tk',
-    'http://localhost:3000',
-  ],
-  allowedHeaders: [
-    'Content-Type',
-    'Origin',
-    'Referer',
-    'Accept',
-    'Authorization',
-  ],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  credentials: true,
-};
+const cors = require('./middlewares/cors');
 
 const app = express();
 
@@ -37,11 +18,12 @@ mongoose.connect(NODE_ENV === 'production' ? MONGODB_SERVER : 'mongodb://localho
   family: 4,
 });
 
+app.use(cors);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
-app.use('*', cors(allowedCors));
 
 app.use(routes);
 
