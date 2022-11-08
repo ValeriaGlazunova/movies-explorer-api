@@ -13,17 +13,15 @@ module.exports.createUser = (req, res, next) => {
   const { name, email, password } = req.body;
 
   bcrypt.hash(password, SALT_ROUNDS)
-    .then((hash) => {
-      User.create({
-        email, password: hash, name,
-      })
-        .then((user) => res.status(201).send({
-          data: {
-            name: user.name,
-            email: user.email,
-          },
-        }));
-    })
+    .then((hash) => User.create({
+      email, password: hash, name,
+    }))
+    .then((user) => res.status(201).send({
+      data: {
+        name: user.name,
+        email: user.email,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new InvalidDataError(`Переданы некорректные данные: ${err.message}`));
